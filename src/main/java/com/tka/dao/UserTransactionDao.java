@@ -1,5 +1,6 @@
 package com.tka.dao;
 import org.hibernate.Session;
+
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
@@ -7,36 +8,57 @@ import com.tka.user.TransactionSummary;
 import com.tka.user.User;
 import com.tka.utility.HibernateUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class UserTransactionDao {
-	
+	List<TransactionSummary> list = null;
 
-	public boolean addTransactionToUser(int userID, TransactionSummary transaction) {
+	
+	public List<TransactionSummary> addTransactionToUser(int userID, TransactionSummary transaction) {
 	    Transaction tx = null;
+	    list = new ArrayList<>();
 	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 	        tx = session.beginTransaction();
 
 	        // Fetch the user
 	        User user = session.get(User.class, userID);
+	        
+	        if (user == null) {
+	            throw new IllegalArgumentException("User with ID " + userID + " not found.");
+	        }
 
 	        // Associate the transaction with the user
 	        transaction.setUser(user);
+	        
+	        session.save(transaction);
+	        
+	     // Add transaction to User's list
 	        user.getTransactions().add(transaction);
 
 	        // Save the transaction
 	        session.saveOrUpdate(user);
+	        
+	        // Fetch the latest transactions (eagerly)
+	        list = session.createQuery(
+	                "FROM TransactionSummary t WHERE t.user.id = :userId", TransactionSummary.class)
+	                .setParameter("userId", userID)
+	                .getResultList();
+//	        list.add(transaction);
 
 	        tx.commit();
-	        return true;
+	        
+//	        list = user.getTransactions();
+	       
 	    } catch (Exception e) {
 	        if (tx != null) {
-	            tx.rollback();
+//	            tx.rollback();
 	        }
 	        e.printStackTrace();
-	        return false;
+	        
 	    }
+	    return list;
 	}
 
 
@@ -49,7 +71,7 @@ public class UserTransactionDao {
 	        }
 	    }
 
-	    public boolean updateTransaction(TransactionSummary transaction, int userID) {
+	    public List<TransactionSummary> updateTransaction(TransactionSummary transaction, int userID) {
 	        Transaction tx = null;
 	        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 	            tx = session.beginTransaction();
@@ -59,7 +81,7 @@ public class UserTransactionDao {
 
 	            if (existingTransaction == null || existingTransaction.getUser().getUserID() != userID) {
 	                // Transaction does not exist or does not belong to the user
-	                return false;
+	                System.out.println("Transaction does not exist for tthis User ");
 	            }
 
 	            // Update the fields of the existing transaction
@@ -71,19 +93,25 @@ public class UserTransactionDao {
 
 	            session.update(existingTransaction);
 	            tx.commit();
-	            return true;
+	            System.out.println("Transaction Updated SuccessFully!!");
+	          
+	            //fetch all the updated transactions list
+	            list = session.createQuery("from TransactionSummary", TransactionSummary.class).getResultList();
 	        } catch (Exception e) {
 	            if (tx != null) {
 	                tx.rollback();
 	            }
 	            e.printStackTrace();
-	            return false;
+	          
 	        }
+	        
+	        return list;
 	    }
 
 
-	    public boolean deleteTransaction(int transactionID, int userID) {
+	    public List<TransactionSummary> deleteTransaction(int transactionID, int userID) {
 	        Transaction tx = null;
+	        list = new ArrayList<>();
 	        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 	            tx = session.beginTransaction();
 
@@ -92,21 +120,24 @@ public class UserTransactionDao {
 
 	            // Check if the transaction exists and belongs to the specified user
 	            if (transaction == null || transaction.getUser().getUserID() != userID) {
-	                return false;
+	               System.out.println("No transaction exist for this user ");
 	            }
 
 	            // Remove the transaction
 	            session.delete(transaction);
 
 	            tx.commit();
-	            return true;
+	            //fetch all the updated transactions list
+	            list = session.createQuery("from TransactionSummary", TransactionSummary.class).getResultList();
+	            
 	        } catch (Exception e) {
 	            if (tx != null) {
 	                tx.rollback();
 	            }
 	            e.printStackTrace();
-	            return false;
+	         
 	        }
+	        return list;
 	    }
 
 

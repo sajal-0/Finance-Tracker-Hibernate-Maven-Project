@@ -1,10 +1,12 @@
 package com.tka.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 
 import com.tka.user.User;
 import com.tka.utility.HibernateUtil;
@@ -16,26 +18,28 @@ public class RegisterUserDao {
     Scanner sc = new Scanner(System.in);
     
 
-    public boolean regUser(User user) {
+    public List<User> regUser(User user) {
     	 Transaction tx = null;
-    	 
+    	 list = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Begin transaction
         	  tx = session.beginTransaction();
 
             // Save the user object
             session.save(user);
-
+            list.add(user);
             // Commit the transaction
             tx.commit();
-            return true;
+            
         } catch (Exception e) {
             if (tx != null) {
             	tx.rollback();
             }
             e.printStackTrace();
-            return false;
+           
         }
+        
+        return list;
     }
     
     public boolean loginUser(String username, String password) {
@@ -55,28 +59,33 @@ public class RegisterUserDao {
         return isAuthenticated;
     }
 
-    public boolean updateUser(User user) {
+    public List<User> updateUser(User user) {
         Transaction transaction = null;
+        list = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Begin transaction
             transaction = session.beginTransaction();
 
             // Update the user object
             session.update(user);
+            list.add(user);
 
             // Commit the transaction
             transaction.commit();
-            return true;
+         
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
-            return false;
+           
         }
+        
+        return list;
     }
-    public boolean deleteUser(int userID) {
+    public List<User> deleteUser(int userID) {
         Transaction transaction = null;
+        list = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Begin transaction
             transaction = session.beginTransaction();
@@ -90,15 +99,32 @@ public class RegisterUserDao {
 
             // Commit the transaction
             transaction.commit();
-            return true;
+            list = session.createQuery("from User", User.class).getResultList();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
+           
+        }
+        return list;
+    }
+    
+    public boolean isUserExists(String username) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM User WHERE username = :username";
+            User existingUser = session.createQuery(hql, User.class)
+                                       .setParameter("username", username)
+                                       .uniqueResult();
+            return existingUser != null; // Return true if user exists
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
+    
+   
+
 
 
     
