@@ -6,7 +6,7 @@ import java.util.List;
 import com.tka.dao.RegisterUserDao;
 import com.tka.user.User;
 
-public class ServiceTracker {
+public class ServiceUserRegistration {
 	RegisterUserDao userDao = null;
 	
 	 public List<User> regUser(User user) {

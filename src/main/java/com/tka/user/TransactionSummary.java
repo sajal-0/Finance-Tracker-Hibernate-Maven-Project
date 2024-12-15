@@ -19,6 +19,7 @@ private double amount;
 private String type;
 private String category;
 
+//@Temporal(TemporalType.DATE)
 private Date date;
 private String description;
 
