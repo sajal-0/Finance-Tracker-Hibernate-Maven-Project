@@ -2,7 +2,11 @@ package com.tka.user;
 
 import java.sql.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,70 +15,63 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
+@Table(name = "transaction_summary")
 public class TransactionSummary {
 	
-@Id
+@Id 
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+@Column(name = "traId")
 private int traID;
+
+@Column(name = "amount")
 private double amount;
+
+@Column(name = "type")
 private String type;
+
+@Column(name = "category")
 private String category;
 
-//@Temporal(TemporalType.DATE)
-private Date date;
+@Column(name = "transaction_date")
+private Date transactionDate;
+
+@Column(name = "description")
 private String description;
 
-@ManyToOne
-@JoinColumn( nullable = false)
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "userID", nullable = false)
 private User user;
 
 public TransactionSummary() {
-	super();
+	
 }
 
 
-public User getUser() {
-	return user;
-}
 
-
-public void setUser(User user) {
-	this.user = user;
-}
-
-
-public TransactionSummary(double amount, String type, String category, Date date, String description, User user) {
-	super();
-	this.amount = amount;
-	this.type = type;
-	this.category = category;
-	this.date = date;
-	this.description = description;
-	this.user = user;
-}
-
-
-public TransactionSummary(int traID, double amount, String type, String category, Date date, String description,
+public TransactionSummary(double amount, String type, String category, Date transactionDate, String description,
 		User user) {
 	super();
-	this.traID = traID;
 	this.amount = amount;
 	this.type = type;
 	this.category = category;
-	this.date = date;
+	this.transactionDate = transactionDate;
 	this.description = description;
 	this.user = user;
 }
 
-
-public TransactionSummary(int traID, int amount, String type, String category, Date date, String description) {
+public TransactionSummary(int traID, double amount, String type, String category, Date transactionDate,
+		String description, User user) {
 	super();
 	this.traID = traID;
 	this.amount = amount;
 	this.type = type;
 	this.category = category;
-	this.date = date;
+	this.transactionDate = transactionDate;
 	this.description = description;
+	this.user = user;
 }
+
+
 
 public int getTraID() {
 	return traID;
@@ -110,14 +107,13 @@ public void setCategory(String category) {
 	this.category = category;
 }
 
-public Date getDate() {
-	return date;
+public Date getTransactionDate() {
+    return transactionDate;
 }
 
-public void setDate(Date date) {
-	this.date = date;
+public void setTransactionDate(Date transactionDate) {
+    this.transactionDate = transactionDate;
 }
-
 public String getDescription() {
     return description;
 }
@@ -126,14 +122,23 @@ public void setDescription(String description) {
     this.description = description;
 }
 
-
-@Override
-public String toString() {
-	return "TransactionSummary [traID=" + traID + ", amount=" + amount + ", type=" + type + ", category=" + category
-			+ ", date=" + date + ", description=" + description + ", user=" + user + "]";
+public User getUser() {
+    return user;
 }
 
-
+public void setUser(User user) {
+    this.user = user;
+}
+@Override
+public String toString() {
+    return "TransactionSummary{" +
+           ", amount=" + amount +
+           ", type='" + type + '\'' +
+           ", category='" + category + '\'' +
+           ", transactionDate=" + transactionDate +
+           ", description='" + description + '\'' +
+           '}'; // Avoid user.toString()
+}
 
 
 

@@ -1,33 +1,47 @@
 package com.tka.user;
 
+import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userID;
+	
+	
+	@NotNull
+	@Size(min = 4, max = 20)
 	private String username;
 	private String password;
+	@Email
 	private String email;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    private List<TransactionSummary> transactions;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	private List<TransactionSummary> transactions = new ArrayList<>();
 
 	public User() {
 		super();
 	}
 	
 
-	public User(int userID, String username, String password, String email, List<TransactionSummary> transactions) {
+
+	public User(@NotNull @Size(min = 4, max = 20) String username, String password, @Email String email,
+			List<TransactionSummary> transactions) {
 		super();
-		this.userID = userID;
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -35,13 +49,14 @@ public class User {
 	}
 
 
-	public User(int userID, String username, String password, String email) {
+
+	public User(@NotNull @Size(min = 4, max = 20) String username, String password, @Email String email) {
 		super();
-		this.userID = userID;
 		this.username = username;
 		this.password = password;
 		this.email = email;
 	}
+
 
 	public int getUserID() {
 		return userID;

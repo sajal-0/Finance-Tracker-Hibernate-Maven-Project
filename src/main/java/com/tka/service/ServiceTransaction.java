@@ -20,7 +20,6 @@ public class ServiceTransaction {
         return transactionDao.addTransactionToUser(userID, transaction);
     }
 
-    // Get all transactions for a user
     public List<TransactionSummary> getAllTransactions(int userID) {
         return transactionDao.allTransaction(userID);
     }
@@ -29,7 +28,7 @@ public class ServiceTransaction {
     public List<TransactionSummary> updateTransaction(TransactionSummary transaction, int userID) {
         return transactionDao.updateTransaction(transaction, userID);
     }
-
+    
     // Delete a transaction
     public List<TransactionSummary> deleteTransaction(int transactionID, int userID) {
         return transactionDao.deleteTransaction(transactionID, userID);
@@ -54,5 +53,16 @@ public class ServiceTransaction {
     public List<TransactionSummary> getTransactionsByCategory(int userID, String category) {
         return transactionDao.getTransactionsByCategory(userID, category);
     }
+    
+    public TransactionSummary getTransactionById(int userID, int transactionID) {
+        if (transactionID <= 0 || userID <= 0) {
+            System.out.println("Invalid user or transaction ID.");
+            return null;
+        }
+
+        return transactionDao.getTransactionById(userID, transactionID);
+    }
+
+    
 }
 

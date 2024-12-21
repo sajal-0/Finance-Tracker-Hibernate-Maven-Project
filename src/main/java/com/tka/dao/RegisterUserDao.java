@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -30,6 +31,8 @@ public class RegisterUserDao {
             list.add(user);
             // Commit the transaction
             tx.commit();
+            
+            list = session.createQuery("FROM User", User.class).list();
             
         } catch (Exception e) {
             if (tx != null) {
@@ -122,6 +125,24 @@ public class RegisterUserDao {
             return false;
         }
     }
+    public User findByUsername(String username) {
+        User user = null;
+        
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // HQL to fetch user by username
+            String hql = "FROM User WHERE username = :username";
+            Query<User> query = session.createQuery(hql, User.class);
+            query.setParameter("username", username);
+
+            // Fetch the result (unique result expected since username is typically unique)
+            user = query.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
     
    
 

@@ -42,5 +42,10 @@ public class ServiceUserRegistration {
 		 List<User> deleteUser = userDao.deleteUser(userID);
 		 return deleteUser;
 	 }
+
+	 public User findByUsername(String username) {
+	        return userDao.findByUsername(username);
+	    }
+	 
 	 
 }
