@@ -1,7 +1,7 @@
-# Transaction Management System
+# Finance Tracker
 
 ## Overview
-The **Transaction Management System** is a Java-based application that allows users to manage their personal financial transactions. It provides functionality for users to add, update, delete, and view their transaction summaries while maintaining data integrity through a Hibernate-based ORM layer and a MySQL database backend.
+The **Finance Tracker** is a Java-based application that allows users to manage their personal financial transactions. It provides functionality for users to add, update, delete, and view their transaction summaries while maintaining data integrity through a Hibernate-based ORM layer and a MySQL database backend.
 
 ---
 
@@ -202,4 +202,4 @@ The **Transaction Management System** is a Java-based application that allows us
 
 ## Author
 **Sajal Bagde**  
-Transaction Management Team
+
